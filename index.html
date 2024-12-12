@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StudentHub</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    input, button {
+      margin: 5px;
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+  </style>
+</head>
+<body>
+  <h1>歡迎使用 StudentHub！</h1>
+  <div>
+    <h3>新增學生資料</h3>
+    <input type="text" id="newAccount" placeholder="帳號">
+    <input type="number" id="newSeatNo" placeholder="座號">
+    <input type="text" id="newName" placeholder="姓名">
+    <input type="text" id="newDepartment" placeholder="院系">
+    <input type="number" id="newGrade" placeholder="年級">
+    <input type="text" id="newClass" placeholder="班級">
+    <input type="email" id="newEmail" placeholder="Email">
+    <input type="number" id="newAbsences" placeholder="缺席次數">
+    <button onclick="createStudent()">新增</button>
+  </div>
+  
+  <table>
+    <thead>
+      <tr>
+        <th>帳號</th>
+        <th>座號</th>
+        <th>姓名</th>
+        <th>院系</th>
+        <th>年級</th>
+        <th>班級</th>
+        <th>Email</th>
+        <th>缺席次數</th>
+        <th>操作</th>
+      </tr>
+    </thead>
+    <tbody id="studentsList">
+      <!-- Dynamic rows will be added here -->
+    </tbody>
+  </table>
+
+  <script>
+    let students = [];
+    let studentID = 0;
+
+    function readStudent() {
+      const studentsList = document.getElementById("studentsList");
+      studentsList.innerHTML = "";
+
+      students.forEach(student => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${student.account}</td>
+          <td>${student.seatNo}</td>
+          <td>${student.name}</td>
+          <td>${student.department}</td>
+          <td>${student.grade}</td>
+          <td>${student.class}</td>
+          <td>${student.email}</td>
+          <td>${student.absences}</td>
+          <td>
+            <button onclick="editStudent(${student.id})">編輯</button>
+            <button onclick="deleteStudent(${student.id})">刪除</button>
+          </td>
+        `;
+        studentsList.appendChild(row);
+      });
+    }
+
+    function createStudent() {
+      const newStudent = {
+        id: studentID++,
+        account: document.getElementById("newAccount").value.trim(),
+        seatNo: document.getElementById("newSeatNo").value.trim(),
+        name: document.getElementById("newName").value.trim(),
+        department: document.getElementById("newDepartment").value.trim(),
+        grade: document.getElementById("newGrade").value.trim(),
+        class: document.getElementById("newClass").value.trim(),
+        email: document.getElementById("newEmail").value.trim(),
+        absences: document.getElementById("newAbsences").value.trim()
+      };
+
+      if (Object.values(newStudent).some(field => !field)) {
+        alert("所有欄位必須填寫！");
+        return;
+      }
+
+      students.push(newStudent);
+      clearForm();
+      readStudent();
+    }
+
+    function clearForm() {
+      document.getElementById("newAccount").value = "";
+      document.getElementById("newSeatNo").value = "";
+      document.getElementById("newName").value = "";
+      document.getElementById("newDepartment").value = "";
+      document.getElementById("newGrade").value = "";
+      document.getElementById("newClass").value = "";
+      document.getElementById("newEmail").value = "";
+      document.getElementById("newAbsences").value = "";
+    }
+
+    function updateStudent(id) {
+      const student = students.find(student => student.id === id);
+      if (student) {
+        const newAccount = prompt("修改帳號:", student.account);
+        const newSeatNo = prompt("修改座號:", student.seatNo);
+        const newName = prompt("修改姓名:", student.name);
+        const newDepartment = prompt("修改院系:", student.department);
+        const newGrade = prompt("修改年級:", student.grade);
+        const newClass = prompt("修改班級:", student.class);
+        const newEmail = prompt("修改Email:", student.email);
+        const newAbsences = prompt("修改缺席次數:", student.absences);
+
+        student.account = newAccount || student.account;
+        student.seatNo = newSeatNo || student.seatNo;
+        student.name = newName || student.name;
+        student.department = newDepartment || student.department;
+        student.grade = newGrade || student.grade;
+        student.class = newClass || student.class;
+        student.email = newEmail || student.email;
+        student.absences = newAbsences || student.absences;
+
+        readStudent();
+      }
+    }
+
+    function deleteStudent(id) {
+      students = students.filter(student => student.id !== id);
+      readStudent();
+    }
+  </script>
+</body>
+</html>
